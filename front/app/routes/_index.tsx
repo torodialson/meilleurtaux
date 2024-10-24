@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Form, json, useLoaderData } from "@remix-run/react";
+import { Form, json, useActionData, useLoaderData } from "@remix-run/react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, FormControl, FormLabel, FormSelect, Table } from "react-bootstrap";
@@ -51,8 +51,7 @@ export async function action({request}: ActionFunctionArgs) {
 }
 
 export default function Index() {
-  const data = useLoaderData<typeof loader>();
-  console.log(data)
+  const data = useActionData();
   
   return (
     <div className="container">
