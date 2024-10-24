@@ -111,7 +111,7 @@ export default function Index() {
       
       <div className="row">
         <div className="col-md-12">
-        {data && (
+        {data && data.length > 0 && (
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -133,6 +133,10 @@ export default function Index() {
             </tbody>
           </Table>
         )}
+        
+        {data && data.length === 0 && ( // Handle case when data is empty
+            <p>Aucune donnee disponible.</p>
+          )}
         </div>
       </div>
       
