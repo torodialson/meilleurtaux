@@ -11,14 +11,14 @@ class RateCalculatorTest extends WebTestCase
         // Start a client to simulate a browser
         $client = static::createClient();
 
-        // Make a POST request to the rateCalculator endpoint with query parameters
+        // Make a POST request to the rateCalculator endpoint with JSON body
         $client->request('POST', '/rate-calculator', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'amount' => 50000,
             'duration' => 15,
         ]));
 
-        // Check the response status code
-        $this->assertResponseIsSuccessful();
+        // Assert that the response status code is 200
+        $this->assertResponseStatusCodeSame(200); // Check HTTP status code
 
         // Check that the response is JSON
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
@@ -33,9 +33,7 @@ class RateCalculatorTest extends WebTestCase
         $this->assertArrayHasKey('data', $responseData);
         $this->assertIsArray($responseData['data']);
 
-        // Additional checks can be done here
-        // For example, check that the data returned has the expected number of results
-        // or specific expected rates.
+        // Check that the returned data has the expected number of results
         $this->assertCount(3, $responseData['data']); // Adjust based on your mock data
 
         // Check that the returned data is sorted by rate
