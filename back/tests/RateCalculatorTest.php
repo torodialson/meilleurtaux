@@ -11,8 +11,11 @@ class RateCalculatorTest extends WebTestCase
         // Start a client to simulate a browser
         $client = static::createClient();
 
-        // Make a GET request to the rateCalculator endpoint with query parameters
-        $crawler = $client->request('POST', '/rate-calculator?amount=50000&duration=15');
+        // Make a POST request to the rateCalculator endpoint with query parameters
+        $client->request('POST', '/rate-calculator', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
+            'amount' => 50000,
+            'duration' => 15,
+        ]));
 
         // Check the response status code
         $this->assertResponseIsSuccessful();
