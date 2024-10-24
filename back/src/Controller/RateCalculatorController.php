@@ -40,6 +40,7 @@ class RateCalculatorController extends AbstractController
 
         // Reading the files
         $sgData = $this->jsonFileReader->readJsonFile($sgFilePath);
+        dd($sgData);
         $carrefourData = $this->jsonFileReader->readJsonFile($carrefourFilePath);
         $bnpData = $this->jsonFileReader->readJsonFile($bnpFilePath);
 
