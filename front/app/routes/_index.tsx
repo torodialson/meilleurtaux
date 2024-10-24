@@ -72,6 +72,13 @@ export default function Index() {
           </Form>
         </div>
       </div>
+      
+      <div className="row">
+        <div className="col-md-12">
+          
+        </div>
+      </div>
+      
     </div>
   );
 }
