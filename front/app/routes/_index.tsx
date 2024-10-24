@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -11,7 +11,12 @@ export const meta: MetaFunction = () => {
     { charset: "utf-8" },
     { viewport: "width=device-width,initial-scale=1" }
   ];
-};
+}
+
+export async function action({request}: ActionFunctionArgs) {
+  const body = await request.formData();
+  return body;
+}
 
 export default function Index() {
   return (
