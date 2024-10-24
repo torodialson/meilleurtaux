@@ -31,7 +31,14 @@ class RateCalculatorController extends AbstractController
         ]);
     }
     
-    #[Route('/rate-calculator', name: 'meilleur_taux', methods: ['GET'])]
+    /**
+     * Returns a list of bank rates based on the given amount and duration.
+     * The list is sorted by rate in ascending order.
+     * 
+     * @param Request $request The request object
+     * @return JsonResponse The response
+     */
+    #[Route('/rate-calculator', name: 'meilleur_taux', methods: ['POST'])]
     public function rateCalculator(Request $request): JsonResponse{
         // Paths to JSON files
         $bnpFilePath = $this->getParameter('kernel.project_dir') . '/data/BNP.json';
@@ -40,7 +47,6 @@ class RateCalculatorController extends AbstractController
 
         // Reading the files
         $sgData = $this->jsonFileReader->readJsonFile($sgFilePath);
-        dd($sgData);
         $carrefourData = $this->jsonFileReader->readJsonFile($carrefourFilePath);
         $bnpData = $this->jsonFileReader->readJsonFile($bnpFilePath);
 
@@ -51,9 +57,35 @@ class RateCalculatorController extends AbstractController
             'SG' => $this->normalizeData($sgData, 'amount', 'duration'),
         ];
         
+        // Extract amount and duration from the request
+        $amount = $request->query->get('amount');
+        $duration = $request->query->get('duration');
+    
+        // Prepare to filter data based on amount and duration
+        $filteredData = [];
+        
+        foreach ($normalizedData as $bank => $data) {
+            foreach ($data as $entry) {
+                // Filter based on requested amount and duration
+                if ($entry['amount'] == $amount && $entry['duration'] == $duration) {
+                    $filteredData[] = [
+                        'bank' => $bank,
+                        'rate' => $entry['rate'],
+                        'amount' => $entry['amount'],
+                        'duration' => $entry['duration'],
+                    ];
+                }
+            }
+        }
+        
+        // Sort the results by rate in ascending order
+        usort($filteredData, function($a, $b) {
+            return $a['rate'] <=> $b['rate'];
+        });
+    
         return $this->json([
             'status' => StatusEnum::SUCCESS,
-            'data' => $normalizedData
+            'data' => $filteredData,
         ]);
     }
     
