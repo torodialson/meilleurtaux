@@ -31,8 +31,6 @@ export async function action({request}: ActionFunctionArgs) {
       body: JSON.stringify(requestData) // Convert the data to a JSON string
     });
     
-    console.log(response)
-    
     // Check if the response is successful
     if (!response.ok) {
       const errorData = await response.json();
@@ -46,14 +44,15 @@ export async function action({request}: ActionFunctionArgs) {
     const rateCalculatorData = await response.json();
   
     // Return the rate calculator data or any other relevant response
-    return json(rateCalculatorData, { status: 200 });
+    return json(rateCalculatorData.data, { status: 200 });
   } catch (err) {
     return err;
   }
 }
 
 export default function Index() {
-  const data = useLoaderData();
+  const data = useLoaderData<typeof loader>();
+  console.log(data)
   
   return (
     <div className="container">
