@@ -40,6 +40,8 @@ class RateCalculatorController extends AbstractController
      */
     #[Route('/rate-calculator', name: 'meilleur_taux', methods: ['POST'])]
     public function rateCalculator(Request $request): JsonResponse{
+        $dataJSON = json_decode($request->getContent(), true);
+        
         // Paths to JSON files
         $bnpFilePath = $this->getParameter('kernel.project_dir') . '/data/BNP.json';
         $carrefourFilePath = $this->getParameter('kernel.project_dir') . '/data/CARREFOURBANK.json';
@@ -58,8 +60,8 @@ class RateCalculatorController extends AbstractController
         ];
         
         // Extract amount and duration from the request
-        $amount = $request->query->get('amount');
-        $duration = $request->query->get('duration');
+        $amount = $dataJSON['amount'];
+        $duration = $dataJSON['duration'];
     
         // Prepare to filter data based on amount and duration
         $filteredData = [];

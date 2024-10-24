@@ -1,8 +1,8 @@
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, json, useLoaderData } from "@remix-run/react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, FormControl, FormLabel, FormSelect } from "react-bootstrap";
+import { Button, FormControl, FormLabel, FormSelect, Table } from "react-bootstrap";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,11 +14,47 @@ export const meta: MetaFunction = () => {
 }
 
 export async function action({request}: ActionFunctionArgs) {
-  const body = await request.formData();
-  return body;
+  const formData = await request.formData();
+  try {
+    // Prepare the data to be sent in the POST request
+    const requestData = {
+        amount: formData.get("amount"),
+        duration: formData.get("duration")
+    }
+    
+    // Send a POST request to the rate-calculator endpoint
+    const response = await fetch("http://127.0.0.1:8000/rate-calculator", {
+      method: "POST",
+      headers: {
+          'Content-Type': 'application/json' // Set content type to JSON
+      },
+      body: JSON.stringify(requestData) // Convert the data to a JSON string
+    });
+    
+    console.log(response)
+    
+    // Check if the response is successful
+    if (!response.ok) {
+      const errorData = await response.json();
+      return json(
+          { errors: { rateCalculator: errorData.message || "Failed to fetch data." } },
+          { status: response.status }
+      );
+    }
+  
+    // Parse the response data
+    const rateCalculatorData = await response.json();
+  
+    // Return the rate calculator data or any other relevant response
+    return json(rateCalculatorData, { status: 200 });
+  } catch (err) {
+    return err;
+  }
 }
 
 export default function Index() {
+  const data = useLoaderData();
+  
   return (
     <div className="container">
       <div className="card">
@@ -75,7 +111,28 @@ export default function Index() {
       
       <div className="row">
         <div className="col-md-12">
-          
+        {data && (
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Nom de la banque</th>
+                <th>Montant du prêt</th>
+                <th>Durée du prêt</th>
+                <th>Taux du prêt</th>
+              </tr>
+            </thead>
+            <tbody>
+            {data.map((item, index) => (
+              <tr key={index}>
+                <td>{item.bank}</td>
+                <td>{item.amount}</td>
+                <td>{item.duration}</td>
+                <td>{item.rate}</td>
+              </tr>
+            ))}
+            </tbody>
+          </Table>
+        )}
         </div>
       </div>
       
